@@ -41,28 +41,11 @@ export default function Products() {
       />
       
       <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h3 className="text-lg font-semibold text-foreground">Product Catalog</h3>
-            <p className="text-sm text-muted-foreground">
-              {products ? `${products.length} products` : "Loading products..."}
-            </p>
-          </div>
-          
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button data-testid="add-product-button">
-                <Plus className="w-4 h-4 mr-2" />
-                Add Product
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Add New Product</DialogTitle>
-              </DialogHeader>
-              <ProductForm onSuccess={handleCloseDialog} />
-            </DialogContent>
-          </Dialog>
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold text-foreground">Product Catalog</h3>
+          <p className="text-sm text-muted-foreground">
+            {products ? `${products.length} products` : "Loading products..."}
+          </p>
 
           <Dialog open={!!editingProduct} onOpenChange={(open) => !open && setEditingProduct(null)}>
             <DialogContent className="max-w-2xl">

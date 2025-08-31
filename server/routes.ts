@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { seedProducts } from "./seed-products";
 import { 
   insertProductSchema,
   insertSupplierSchema, 
@@ -318,6 +319,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(report);
     } catch (error) {
       res.status(500).json({ message: "Failed to generate stock report" });
+    }
+  });
+
+  // Seed products endpoint
+  app.post("/api/seed-products", async (req, res) => {
+    try {
+      const result = await seedProducts();
+      if (result.success) {
+        res.json({ message: result.message });
+      } else {
+        res.status(500).json({ message: result.error });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Failed to seed products" });
     }
   });
 
