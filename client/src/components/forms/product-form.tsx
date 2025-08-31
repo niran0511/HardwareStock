@@ -5,6 +5,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { productsApi } from "@/lib/api";
 import { insertProductSchema } from "@shared/schema";
@@ -13,6 +14,32 @@ import { z } from "zod";
 
 // Custom form schema with optional SKU and reorderLevel
 const productFormSchema = insertProductSchema.partial({ sku: true, reorderLevel: true });
+
+// Predefined product options
+const productOptions = [
+  "Door Handle",
+  "Padlock",
+  "Mortise Lock",
+  "Hinges",
+  "Door Closer",
+  "Drawer Slide",
+  "Plywood Sheet",
+  "MDF Board",
+  "Screws",
+  "Nails",
+  "Bolts",
+  "Nuts",
+  "Washers",
+  "Angle Bracket",
+  "Wall Plug",
+  "Door Stopper",
+  "Cabinet Knob",
+  "Window Latch",
+  "Tower Bolt",
+  "Hasps & Staples"
+];
+
+type ProductFormData = z.infer<typeof productFormSchema>;
 
 interface ProductFormProps {
   product?: Product | null;
@@ -23,7 +50,7 @@ export default function ProductForm({ product, onSuccess }: ProductFormProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const form = useForm({
+  const form = useForm<ProductFormData>({
     resolver: zodResolver(productFormSchema),
     defaultValues: {
       name: product?.name || "",
@@ -74,11 +101,18 @@ export default function ProductForm({ product, onSuccess }: ProductFormProps) {
     },
   });
 
-  const onSubmit = (data: InsertProduct) => {
+  const onSubmit = (data: ProductFormData) => {
+    // Ensure required fields for backend
+    const submitData: InsertProduct = {
+      ...data,
+      sku: data.sku || '',
+      reorderLevel: data.reorderLevel || 10
+    };
+    
     if (product) {
-      updateMutation.mutate(data);
+      updateMutation.mutate(submitData);
     } else {
-      createMutation.mutate(data);
+      createMutation.mutate(submitData);
     }
   };
 
@@ -94,7 +128,18 @@ export default function ProductForm({ product, onSuccess }: ProductFormProps) {
             <FormItem>
               <FormLabel>Product Name</FormLabel>
               <FormControl>
-                <Input placeholder="Enter product name" {...field} data-testid="product-name-input" />
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger data-testid="product-name-select">
+                    <SelectValue placeholder="Select a product" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {productOptions.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </FormControl>
               <FormMessage />
             </FormItem>
