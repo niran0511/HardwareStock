@@ -39,6 +39,13 @@ const productOptions = [
   "Hasps & Staples"
 ];
 
+// Predefined category options
+const categoryOptions = [
+  "Doors",
+  "Hardware",
+  "Plywood"
+];
+
 type ProductFormData = z.infer<typeof productFormSchema>;
 
 interface ProductFormProps {
@@ -154,7 +161,18 @@ export default function ProductForm({ product, onSuccess }: ProductFormProps) {
               <FormItem>
                 <FormLabel>Category</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., Doors, Hardware, Plywood" {...field} data-testid="product-category-input" />
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger data-testid="product-category-select">
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categoryOptions.map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {option}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -187,7 +205,7 @@ export default function ProductForm({ product, onSuccess }: ProductFormProps) {
           name="quantity"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Current Quantity</FormLabel>
+              <FormLabel>Quantity</FormLabel>
               <FormControl>
                 <Input 
                   type="number" 
