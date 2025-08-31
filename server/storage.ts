@@ -32,7 +32,6 @@ export interface IStorage {
   updateProduct(id: string, product: Partial<InsertProduct>): Promise<Product | undefined>;
   deleteProduct(id: string): Promise<boolean>;
   searchProducts(query: string): Promise<Product[]>;
-  getProductsBySku(sku: string): Promise<Product | undefined>;
   
   // Suppliers
   getSuppliers(): Promise<Supplier[]>;
@@ -77,12 +76,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createProduct(insertProduct: InsertProduct): Promise<Product> {
-    // Auto-generate SKU if not provided
-    const sku = insertProduct.sku || `SKU-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
-    
     const productData = {
       ...insertProduct,
-      sku,
       reorderLevel: insertProduct.reorderLevel || 10, // Default reorder level
       description: insertProduct.description || null
     };
@@ -107,14 +102,10 @@ export class DatabaseStorage implements IStorage {
   async searchProducts(query: string): Promise<Product[]> {
     const lowercaseQuery = `%${query.toLowerCase()}%`;
     return await db.select().from(products).where(
-      sql`LOWER(${products.name}) LIKE ${lowercaseQuery} OR LOWER(${products.sku}) LIKE ${lowercaseQuery} OR LOWER(${products.category}) LIKE ${lowercaseQuery}`
+      sql`LOWER(${products.name}) LIKE ${lowercaseQuery} OR LOWER(${products.category}) LIKE ${lowercaseQuery}`
     );
   }
 
-  async getProductsBySku(sku: string): Promise<Product | undefined> {
-    const result = await db.select().from(products).where(eq(products.sku, sku));
-    return result[0];
-  }
 
   // Suppliers
   async getSuppliers(): Promise<Supplier[]> {
@@ -314,7 +305,7 @@ export class DatabaseStorage implements IStorage {
       enriched.push({
         ...t,
         productName: product?.name || 'Unknown Product',
-        productSku: product?.sku || 'Unknown SKU',
+        productSku: `PRD-${product?.name?.substring(0, 3).toUpperCase() || 'UNK'}`,
         supplierName: supplier?.name,
         customerName: customer?.name
       });

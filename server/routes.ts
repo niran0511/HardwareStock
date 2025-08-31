@@ -52,11 +52,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid product data", errors: validation.error.issues });
       }
       
-      // Check for duplicate SKU
-      const existingProduct = await storage.getProductsBySku(validation.data.sku);
-      if (existingProduct) {
-        return res.status(400).json({ message: "Product with this SKU already exists" });
-      }
 
       const product = await storage.createProduct(validation.data);
       res.status(201).json(product);

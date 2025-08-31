@@ -42,6 +42,7 @@ export async function seedProducts() {
           category: productData.category,
           price: productData.price,
           quantity: productData.quantity,
+          reorderLevel: 10,
           description: null
         });
         console.log(`✓ Created product: ${productData.name} - ₹${productData.price}`);

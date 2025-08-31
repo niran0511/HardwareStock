@@ -12,8 +12,8 @@ import { insertProductSchema } from "@shared/schema";
 import type { Product, InsertProduct } from "@shared/schema";
 import { z } from "zod";
 
-// Custom form schema with optional SKU and reorderLevel
-const productFormSchema = insertProductSchema.partial({ sku: true, reorderLevel: true });
+// Custom form schema with optional reorderLevel
+const productFormSchema = insertProductSchema.partial({ reorderLevel: true });
 
 // Predefined product options
 const productOptions = [
@@ -112,7 +112,6 @@ export default function ProductForm({ product, onSuccess }: ProductFormProps) {
     // Ensure required fields for backend
     const submitData: InsertProduct = {
       ...data,
-      sku: data.sku || '',
       reorderLevel: data.reorderLevel || 10
     };
     

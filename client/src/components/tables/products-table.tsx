@@ -80,10 +80,7 @@ export default function ProductsTable({ products, isLoading, onEdit }: ProductsT
                   Product
                 </th>
                 <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-6 py-3">
-                  SKU
-                </th>
-                <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-6 py-3">
-                  Price
+                  Price (₹)
                 </th>
                 <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-6 py-3">
                   Stock
@@ -99,7 +96,7 @@ export default function ProductsTable({ products, isLoading, onEdit }: ProductsT
             <tbody className="divide-y divide-border">
               {products?.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-muted-foreground">
+                  <td colSpan={5} className="px-6 py-8 text-center text-muted-foreground">
                     No products found
                   </td>
                 </tr>
@@ -125,11 +122,8 @@ export default function ProductsTable({ products, isLoading, onEdit }: ProductsT
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground" data-testid={`product-sku-${product.id}`}>
-                        {product.sku}
-                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground" data-testid={`product-price-${product.id}`}>
-                        ${parseFloat(product.price).toFixed(2)}
+                        ₹{parseFloat(product.price).toFixed(2)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" data-testid={`product-quantity-${product.id}`}>
                         {product.quantity}

@@ -6,9 +6,8 @@ import { z } from "zod";
 export const products = pgTable("products", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
-  sku: text("sku").notNull().unique(),
   category: text("category").notNull(),
-  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull().default("0.00"),
   quantity: integer("quantity").notNull().default(0),
   reorderLevel: integer("reorder_level").notNull(),
   description: text("description"),
