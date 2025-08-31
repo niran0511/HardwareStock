@@ -125,7 +125,7 @@ export default function Reports() {
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Total Stock Value</p>
                   <p className="text-3xl font-bold text-foreground" data-testid="total-stock-value">
-                    ${totalStockValue.toLocaleString()}
+                    ₹{totalStockValue.toLocaleString('en-IN')}
                   </p>
                 </div>
                 <Layers className="w-8 h-8 text-green-600" />
@@ -215,13 +215,13 @@ export default function Reports() {
                               {product.sku}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
-                              ${parseFloat(product.price).toFixed(2)}
+                              ₹{parseFloat(product.price).toFixed(2)}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                               {product.quantity}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
-                              ${totalValue.toFixed(2)}
+                              ₹{totalValue.toFixed(2)}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span className={`status-badge ${
@@ -329,7 +329,7 @@ export default function Reports() {
                             {transaction.type === 'in' ? '+' : '-'}{transaction.quantity}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
-                            ${parseFloat(transaction.totalValue || '0').toFixed(2)}
+                            ₹{parseFloat(transaction.totalValue || '0').toFixed(2)}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                             {transaction.supplierName || transaction.customerName || transaction.reason}

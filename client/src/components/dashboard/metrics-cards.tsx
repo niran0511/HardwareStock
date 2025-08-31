@@ -48,7 +48,7 @@ export default function MetricsCards({ metrics, isLoading }: MetricsCardsProps) 
     },
     {
       title: "Total Stock Value",
-      value: `$${metrics.totalStockValue.toLocaleString()}`,
+      value: `₹${metrics.totalStockValue.toLocaleString('en-IN')}`,
       icon: DollarSign,
       iconBg: "bg-green-100",
       iconColor: "text-green-600",

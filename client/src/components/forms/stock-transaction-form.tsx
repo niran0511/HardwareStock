@@ -183,7 +183,7 @@ export default function StockTransactionForm({ type, onSuccess }: StockTransacti
           name="unitPrice"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Unit Price ($)</FormLabel>
+              <FormLabel>Unit Price (₹)</FormLabel>
               <FormControl>
                 <Input 
                   type="number" 
@@ -200,7 +200,7 @@ export default function StockTransactionForm({ type, onSuccess }: StockTransacti
         />
 
         <div className="text-sm text-muted-foreground">
-          Total Value: <span className="font-medium text-foreground">${totalValue}</span>
+          Total Value: <span className="font-medium text-foreground">₹{totalValue}</span>
         </div>
 
         {showSupplier && (
@@ -210,7 +210,7 @@ export default function StockTransactionForm({ type, onSuccess }: StockTransacti
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Supplier</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} defaultValue={field.value || undefined}>
                   <FormControl>
                     <SelectTrigger data-testid="supplier-select">
                       <SelectValue placeholder="Select a supplier" />
@@ -237,7 +237,7 @@ export default function StockTransactionForm({ type, onSuccess }: StockTransacti
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Customer</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} defaultValue={field.value || undefined}>
                   <FormControl>
                     <SelectTrigger data-testid="customer-select">
                       <SelectValue placeholder="Select a customer" />

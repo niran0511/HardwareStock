@@ -135,7 +135,7 @@ export default function ProductForm({ product, onSuccess }: ProductFormProps) {
             name="price"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Price ($)</FormLabel>
+                <FormLabel>Price (₹)</FormLabel>
                 <FormControl>
                   <Input 
                     type="number" 
