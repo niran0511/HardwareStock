@@ -9,6 +9,10 @@ import { useToast } from "@/hooks/use-toast";
 import { productsApi } from "@/lib/api";
 import { insertProductSchema } from "@shared/schema";
 import type { Product, InsertProduct } from "@shared/schema";
+import { z } from "zod";
+
+// Custom form schema with optional SKU and reorderLevel
+const productFormSchema = insertProductSchema.partial({ sku: true, reorderLevel: true });
 
 interface ProductFormProps {
   product?: Product | null;
@@ -19,15 +23,13 @@ export default function ProductForm({ product, onSuccess }: ProductFormProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const form = useForm<InsertProduct>({
-    resolver: zodResolver(insertProductSchema),
+  const form = useForm({
+    resolver: zodResolver(productFormSchema),
     defaultValues: {
       name: product?.name || "",
-      sku: product?.sku || "",
       category: product?.category || "",
       price: product?.price || "0",
       quantity: product?.quantity || 0,
-      reorderLevel: product?.reorderLevel || 0,
       description: product?.description || "",
     },
   });
@@ -85,35 +87,19 @@ export default function ProductForm({ product, onSuccess }: ProductFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Product Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter product name" {...field} data-testid="product-name-input" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
-          <FormField
-            control={form.control}
-            name="sku"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>SKU</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter SKU" {...field} data-testid="product-sku-input" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Product Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter product name" {...field} data-testid="product-name-input" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
@@ -151,47 +137,25 @@ export default function ProductForm({ product, onSuccess }: ProductFormProps) {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="quantity"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Current Quantity</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="number" 
-                    placeholder="0" 
-                    {...field}
-                    onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                    data-testid="product-quantity-input"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
-          <FormField
-            control={form.control}
-            name="reorderLevel"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Reorder Level</FormLabel>
-                <FormControl>
-                  <Input 
-                    type="number" 
-                    placeholder="0" 
-                    {...field}
-                    onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                    data-testid="product-reorder-level-input"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+        <FormField
+          control={form.control}
+          name="quantity"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Current Quantity</FormLabel>
+              <FormControl>
+                <Input 
+                  type="number" 
+                  placeholder="0" 
+                  {...field}
+                  onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                  data-testid="product-quantity-input"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}

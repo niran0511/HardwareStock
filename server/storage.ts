@@ -77,8 +77,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createProduct(insertProduct: InsertProduct): Promise<Product> {
+    // Auto-generate SKU if not provided
+    const sku = insertProduct.sku || `SKU-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
+    
     const productData = {
       ...insertProduct,
+      sku,
+      reorderLevel: insertProduct.reorderLevel || 10, // Default reorder level
       description: insertProduct.description || null
     };
     const result = await db.insert(products).values(productData).returning();
