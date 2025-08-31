@@ -202,7 +202,8 @@ export default function ProductForm({ product, onSuccess }: ProductFormProps) {
               <FormControl>
                 <Textarea 
                   placeholder="Enter product description" 
-                  {...field} 
+                  {...field}
+                  value={field.value || ""} 
                   data-testid="product-description-input"
                 />
               </FormControl>

@@ -189,7 +189,8 @@ export default function StockTransactionForm({ type, onSuccess }: StockTransacti
                   type="number" 
                   step="0.01" 
                   placeholder="0.00" 
-                  {...field} 
+                  {...field}
+                  value={field.value || ""} 
                   data-testid="unit-price-input"
                 />
               </FormControl>
@@ -265,7 +266,8 @@ export default function StockTransactionForm({ type, onSuccess }: StockTransacti
               <FormControl>
                 <Textarea 
                   placeholder="Additional notes..." 
-                  {...field} 
+                  {...field}
+                  value={field.value || ""} 
                   data-testid="notes-input"
                 />
               </FormControl>

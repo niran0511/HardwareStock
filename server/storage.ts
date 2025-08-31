@@ -10,9 +10,19 @@ import {
   type ProductWithStock,
   type StockTransactionWithDetails,
   type DashboardMetrics,
-  type CategorySummary
+  type CategorySummary,
+  products,
+  suppliers,
+  customers,
+  stockTransactions
 } from "@shared/schema";
+import { drizzle } from "drizzle-orm/neon-http";
+import { neon } from "@neondatabase/serverless";
+import { eq, sql, desc } from "drizzle-orm";
 import { randomUUID } from "crypto";
+
+const client = neon(process.env.DATABASE_URL!);
+const db = drizzle(client);
 
 export interface IStorage {
   // Products
@@ -52,142 +62,155 @@ export interface IStorage {
   getStockReport(): Promise<ProductWithStock[]>;
 }
 
-export class MemStorage implements IStorage {
-  private products: Map<string, Product>;
-  private suppliers: Map<string, Supplier>;
-  private customers: Map<string, Customer>;
-  private stockTransactions: Map<string, StockTransaction>;
-
-  constructor() {
-    this.products = new Map();
-    this.suppliers = new Map();
-    this.customers = new Map();
-    this.stockTransactions = new Map();
-  }
+export class DatabaseStorage implements IStorage {
+  constructor() {}
 
   // Products
+
   async getProducts(): Promise<Product[]> {
-    return Array.from(this.products.values());
+    return await db.select().from(products);
   }
 
   async getProduct(id: string): Promise<Product | undefined> {
-    return this.products.get(id);
+    const result = await db.select().from(products).where(eq(products.id, id));
+    return result[0];
   }
 
   async createProduct(insertProduct: InsertProduct): Promise<Product> {
-    const id = randomUUID();
-    const product: Product = { ...insertProduct, id };
-    this.products.set(id, product);
-    return product;
+    const productData = {
+      ...insertProduct,
+      description: insertProduct.description || null
+    };
+    const result = await db.insert(products).values(productData).returning();
+    return result[0];
   }
 
   async updateProduct(id: string, updates: Partial<InsertProduct>): Promise<Product | undefined> {
-    const existing = this.products.get(id);
-    if (!existing) return undefined;
-    
-    const updated: Product = { ...existing, ...updates };
-    this.products.set(id, updated);
-    return updated;
+    const updateData = {
+      ...updates,
+      ...(updates.description !== undefined && { description: updates.description || null })
+    };
+    const result = await db.update(products).set(updateData).where(eq(products.id, id)).returning();
+    return result[0];
   }
 
   async deleteProduct(id: string): Promise<boolean> {
-    return this.products.delete(id);
+    const result = await db.delete(products).where(eq(products.id, id)).returning();
+    return result.length > 0;
   }
 
   async searchProducts(query: string): Promise<Product[]> {
-    const products = Array.from(this.products.values());
-    const lowercaseQuery = query.toLowerCase();
-    return products.filter(p => 
-      p.name.toLowerCase().includes(lowercaseQuery) ||
-      p.sku.toLowerCase().includes(lowercaseQuery) ||
-      p.category.toLowerCase().includes(lowercaseQuery)
+    const lowercaseQuery = `%${query.toLowerCase()}%`;
+    return await db.select().from(products).where(
+      sql`LOWER(${products.name}) LIKE ${lowercaseQuery} OR LOWER(${products.sku}) LIKE ${lowercaseQuery} OR LOWER(${products.category}) LIKE ${lowercaseQuery}`
     );
   }
 
   async getProductsBySku(sku: string): Promise<Product | undefined> {
-    return Array.from(this.products.values()).find(p => p.sku === sku);
+    const result = await db.select().from(products).where(eq(products.sku, sku));
+    return result[0];
   }
 
   // Suppliers
   async getSuppliers(): Promise<Supplier[]> {
-    return Array.from(this.suppliers.values());
+    return await db.select().from(suppliers);
   }
 
   async getSupplier(id: string): Promise<Supplier | undefined> {
-    return this.suppliers.get(id);
+    const result = await db.select().from(suppliers).where(eq(suppliers.id, id));
+    return result[0];
   }
 
   async createSupplier(insertSupplier: InsertSupplier): Promise<Supplier> {
-    const id = randomUUID();
-    const supplier: Supplier = { ...insertSupplier, id };
-    this.suppliers.set(id, supplier);
-    return supplier;
+    const supplierData = {
+      ...insertSupplier,
+      email: insertSupplier.email || null,
+      phone: insertSupplier.phone || null,
+      address: insertSupplier.address || null
+    };
+    const result = await db.insert(suppliers).values(supplierData).returning();
+    return result[0];
   }
 
   async updateSupplier(id: string, updates: Partial<InsertSupplier>): Promise<Supplier | undefined> {
-    const existing = this.suppliers.get(id);
-    if (!existing) return undefined;
-    
-    const updated: Supplier = { ...existing, ...updates };
-    this.suppliers.set(id, updated);
-    return updated;
+    const updateData = {
+      ...updates,
+      ...(updates.email !== undefined && { email: updates.email || null }),
+      ...(updates.phone !== undefined && { phone: updates.phone || null }),
+      ...(updates.address !== undefined && { address: updates.address || null })
+    };
+    const result = await db.update(suppliers).set(updateData).where(eq(suppliers.id, id)).returning();
+    return result[0];
   }
 
   async deleteSupplier(id: string): Promise<boolean> {
-    return this.suppliers.delete(id);
+    const result = await db.delete(suppliers).where(eq(suppliers.id, id)).returning();
+    return result.length > 0;
   }
 
   // Customers
   async getCustomers(): Promise<Customer[]> {
-    return Array.from(this.customers.values());
+    return await db.select().from(customers);
   }
 
   async getCustomer(id: string): Promise<Customer | undefined> {
-    return this.customers.get(id);
+    const result = await db.select().from(customers).where(eq(customers.id, id));
+    return result[0];
   }
 
   async createCustomer(insertCustomer: InsertCustomer): Promise<Customer> {
-    const id = randomUUID();
-    const customer: Customer = { ...insertCustomer, id };
-    this.customers.set(id, customer);
-    return customer;
+    const customerData = {
+      ...insertCustomer,
+      email: insertCustomer.email || null,
+      phone: insertCustomer.phone || null,
+      address: insertCustomer.address || null
+    };
+    const result = await db.insert(customers).values(customerData).returning();
+    return result[0];
   }
 
   async updateCustomer(id: string, updates: Partial<InsertCustomer>): Promise<Customer | undefined> {
-    const existing = this.customers.get(id);
-    if (!existing) return undefined;
-    
-    const updated: Customer = { ...existing, ...updates };
-    this.customers.set(id, updated);
-    return updated;
+    const updateData = {
+      ...updates,
+      ...(updates.email !== undefined && { email: updates.email || null }),
+      ...(updates.phone !== undefined && { phone: updates.phone || null }),
+      ...(updates.address !== undefined && { address: updates.address || null })
+    };
+    const result = await db.update(customers).set(updateData).where(eq(customers.id, id)).returning();
+    return result[0];
   }
 
   async deleteCustomer(id: string): Promise<boolean> {
-    return this.customers.delete(id);
+    const result = await db.delete(customers).where(eq(customers.id, id)).returning();
+    return result.length > 0;
   }
 
   // Stock Transactions
   async getStockTransactions(): Promise<StockTransactionWithDetails[]> {
-    const transactions = Array.from(this.stockTransactions.values());
+    const transactions = await db.select().from(stockTransactions).orderBy(desc(stockTransactions.timestamp));
     return this.enrichTransactions(transactions);
   }
 
   async getStockTransaction(id: string): Promise<StockTransactionWithDetails | undefined> {
-    const transaction = this.stockTransactions.get(id);
-    if (!transaction) return undefined;
+    const result = await db.select().from(stockTransactions).where(eq(stockTransactions.id, id));
+    if (!result[0]) return undefined;
     
-    const enriched = await this.enrichTransactions([transaction]);
+    const enriched = await this.enrichTransactions([result[0]]);
     return enriched[0];
   }
 
   async createStockTransaction(insertTransaction: InsertStockTransaction): Promise<StockTransaction> {
-    const id = randomUUID();
-    const transaction: StockTransaction = { 
-      ...insertTransaction, 
-      id,
-      timestamp: new Date()
+    const transactionData = {
+      ...insertTransaction,
+      unitPrice: insertTransaction.unitPrice || null,
+      totalValue: insertTransaction.totalValue || null,
+      supplierId: insertTransaction.supplierId || null,
+      customerId: insertTransaction.customerId || null,
+      notes: insertTransaction.notes || null
     };
-    this.stockTransactions.set(id, transaction);
+    
+    const result = await db.insert(stockTransactions).values(transactionData).returning();
+    const transaction = result[0];
     
     // Update product quantity
     await this.updateProductQuantity(transaction.productId, transaction.type, transaction.quantity);
@@ -196,20 +219,21 @@ export class MemStorage implements IStorage {
   }
 
   async getStockTransactionsByProduct(productId: string): Promise<StockTransactionWithDetails[]> {
-    const transactions = Array.from(this.stockTransactions.values())
-      .filter(t => t.productId === productId);
+    const transactions = await db.select().from(stockTransactions)
+      .where(eq(stockTransactions.productId, productId))
+      .orderBy(desc(stockTransactions.timestamp));
     return this.enrichTransactions(transactions);
   }
 
   // Dashboard & Reports
   async getDashboardMetrics(): Promise<DashboardMetrics> {
-    const products = Array.from(this.products.values());
-    const suppliers = Array.from(this.suppliers.values());
+    const allProducts = await db.select().from(products);
+    const allSuppliers = await db.select().from(suppliers);
     
-    const totalProducts = products.length;
-    const lowStockCount = products.filter(p => p.quantity <= p.reorderLevel).length;
-    const totalStockValue = products.reduce((sum, p) => sum + (parseFloat(p.price) * p.quantity), 0);
-    const activeSuppliers = suppliers.filter(s => s.isActive).length;
+    const totalProducts = allProducts.length;
+    const lowStockCount = allProducts.filter(p => p.quantity <= p.reorderLevel).length;
+    const totalStockValue = allProducts.reduce((sum, p) => sum + (parseFloat(p.price) * p.quantity), 0);
+    const activeSuppliers = allSuppliers.filter(s => s.isActive).length;
 
     return {
       totalProducts,
@@ -220,8 +244,8 @@ export class MemStorage implements IStorage {
   }
 
   async getLowStockProducts(): Promise<ProductWithStock[]> {
-    const products = Array.from(this.products.values());
-    return products
+    const allProducts = await db.select().from(products);
+    return allProducts
       .filter(p => p.quantity <= p.reorderLevel)
       .map(p => ({
         ...p,
@@ -230,18 +254,18 @@ export class MemStorage implements IStorage {
   }
 
   async getRecentActivity(limit: number = 10): Promise<StockTransactionWithDetails[]> {
-    const transactions = Array.from(this.stockTransactions.values())
-      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-      .slice(0, limit);
+    const transactions = await db.select().from(stockTransactions)
+      .orderBy(desc(stockTransactions.timestamp))
+      .limit(limit);
     
     return this.enrichTransactions(transactions);
   }
 
   async getCategorySummary(): Promise<CategorySummary[]> {
-    const products = Array.from(this.products.values());
+    const allProducts = await db.select().from(products);
     const categoryMap = new Map<string, { count: number; value: number }>();
 
-    products.forEach(p => {
+    allProducts.forEach(p => {
       const existing = categoryMap.get(p.category) || { count: 0, value: 0 };
       categoryMap.set(p.category, {
         count: existing.count + 1,
@@ -258,8 +282,8 @@ export class MemStorage implements IStorage {
   }
 
   async getStockReport(): Promise<ProductWithStock[]> {
-    const products = Array.from(this.products.values());
-    return products.map(p => ({
+    const allProducts = await db.select().from(products);
+    return allProducts.map(p => ({
       ...p,
       stockStatus: this.getStockStatus(p)
     }));
@@ -267,23 +291,35 @@ export class MemStorage implements IStorage {
 
   // Helper methods
   private async enrichTransactions(transactions: StockTransaction[]): Promise<StockTransactionWithDetails[]> {
-    return transactions.map(t => {
-      const product = this.products.get(t.productId);
-      const supplier = t.supplierId ? this.suppliers.get(t.supplierId) : undefined;
-      const customer = t.customerId ? this.customers.get(t.customerId) : undefined;
+    const enriched: StockTransactionWithDetails[] = [];
+    
+    for (const t of transactions) {
+      const product = await this.getProduct(t.productId);
+      let supplier: Supplier | undefined;
+      let customer: Customer | undefined;
+      
+      if (t.supplierId) {
+        supplier = await this.getSupplier(t.supplierId);
+      }
+      
+      if (t.customerId) {
+        customer = await this.getCustomer(t.customerId);
+      }
 
-      return {
+      enriched.push({
         ...t,
         productName: product?.name || 'Unknown Product',
         productSku: product?.sku || 'Unknown SKU',
         supplierName: supplier?.name,
         customerName: customer?.name
-      };
-    });
+      });
+    }
+    
+    return enriched;
   }
 
   private async updateProductQuantity(productId: string, type: string, quantity: number): Promise<void> {
-    const product = this.products.get(productId);
+    const product = await this.getProduct(productId);
     if (!product) return;
 
     const adjustment = type === 'in' ? quantity : -quantity;
@@ -299,4 +335,4 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

@@ -133,7 +133,8 @@ export default function CustomerForm({ customer, onSuccess }: CustomerFormProps)
                   <Input 
                     type="email" 
                     placeholder="customer@example.com" 
-                    {...field} 
+                    {...field}
+                    value={field.value || ""} 
                     data-testid="customer-email-input"
                   />
                 </FormControl>
@@ -149,7 +150,7 @@ export default function CustomerForm({ customer, onSuccess }: CustomerFormProps)
               <FormItem>
                 <FormLabel>Phone (Optional)</FormLabel>
                 <FormControl>
-                  <Input placeholder="(555) 123-4567" {...field} data-testid="customer-phone-input" />
+                  <Input placeholder="(555) 123-4567" {...field} value={field.value || ""} data-testid="customer-phone-input" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -166,7 +167,8 @@ export default function CustomerForm({ customer, onSuccess }: CustomerFormProps)
               <FormControl>
                 <Textarea 
                   placeholder="Enter customer address" 
-                  {...field} 
+                  {...field}
+                  value={field.value || ""} 
                   data-testid="customer-address-input"
                 />
               </FormControl>

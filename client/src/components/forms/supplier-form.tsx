@@ -135,7 +135,8 @@ export default function SupplierForm({ supplier, onSuccess }: SupplierFormProps)
                   <Input 
                     type="email" 
                     placeholder="supplier@example.com" 
-                    {...field} 
+                    {...field}
+                    value={field.value || ""} 
                     data-testid="supplier-email-input"
                   />
                 </FormControl>
@@ -151,7 +152,7 @@ export default function SupplierForm({ supplier, onSuccess }: SupplierFormProps)
               <FormItem>
                 <FormLabel>Phone (Optional)</FormLabel>
                 <FormControl>
-                  <Input placeholder="(555) 123-4567" {...field} data-testid="supplier-phone-input" />
+                  <Input placeholder="(555) 123-4567" {...field} value={field.value || ""} data-testid="supplier-phone-input" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -168,7 +169,8 @@ export default function SupplierForm({ supplier, onSuccess }: SupplierFormProps)
               <FormControl>
                 <Textarea 
                   placeholder="Enter supplier address" 
-                  {...field} 
+                  {...field}
+                  value={field.value || ""} 
                   data-testid="supplier-address-input"
                 />
               </FormControl>
