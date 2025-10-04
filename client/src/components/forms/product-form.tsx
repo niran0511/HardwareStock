@@ -72,7 +72,10 @@ export default function ProductForm({ product, onSuccess }: ProductFormProps) {
     mutationFn: productsApi.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/products"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/dashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/metrics"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/low-stock"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/categories"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/recent-activity"] });
       toast({
         title: "Success",
         description: "Product created successfully",
@@ -92,7 +95,10 @@ export default function ProductForm({ product, onSuccess }: ProductFormProps) {
     mutationFn: (data: Partial<InsertProduct>) => productsApi.update(product!.id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/products"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/dashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/metrics"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/low-stock"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/categories"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/recent-activity"] });
       toast({
         title: "Success",
         description: "Product updated successfully",

@@ -68,7 +68,10 @@ export default function StockTransactionForm({ type, onSuccess }: StockTransacti
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/stock-transactions"] });
       queryClient.invalidateQueries({ queryKey: ["/api/products"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/dashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/metrics"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/low-stock"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/categories"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/recent-activity"] });
       toast({
         title: "Success",
         description: `Stock ${type} transaction recorded successfully`,
