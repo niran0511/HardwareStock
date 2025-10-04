@@ -98,7 +98,7 @@ export default function LowStockTable({ products, isLoading }: LowStockTableProp
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground" data-testid={`product-sku-${product.id}`}>
-                        {product.sku}
+                        {product.id.slice(0, 8)}
                       </td>
                       <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${
                         product.quantity === 0 ? 'text-red-600' : 'text-yellow-600'

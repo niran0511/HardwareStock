@@ -55,7 +55,7 @@ export async function seedProducts() {
     return { success: true, message: "All products seeded successfully" };
   } catch (error) {
     console.error("Error seeding products:", error);
-    return { success: false, error: error.message };
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
   }
 }
 
