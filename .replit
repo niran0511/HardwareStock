@@ -15,7 +15,7 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 41087
+localPort = 32917
 externalPort = 3000
 
 [env]
@@ -43,3 +43,4 @@ args = "npm run dev"
 waitForPort = 5000
 
 [agent]
+expertMode = true
