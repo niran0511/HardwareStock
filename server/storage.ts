@@ -16,13 +16,12 @@ import {
   customers,
   stockTransactions
 } from "@shared/schema";
-import { drizzle } from "drizzle-orm/neon-http";
-import { neon } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/better-sqlite3";
+import Database from "better-sqlite3";
 import { eq, sql, desc } from "drizzle-orm";
-import { randomUUID } from "crypto";
 
-const client = neon(process.env.DATABASE_URL!);
-const db = drizzle(client);
+const sqlite = new Database("sqlite.db");
+const db = drizzle(sqlite);
 
 export interface IStorage {
   // Products
