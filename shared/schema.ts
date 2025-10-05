@@ -1,47 +1,47 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, decimal, integer, timestamp, boolean } from "drizzle-orm/pg-core";
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const products = pgTable("products", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+export const products = sqliteTable("products", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   name: text("name").notNull(),
   category: text("category").notNull(),
-  price: decimal("price", { precision: 10, scale: 2 }).notNull().default("0.00"),
+  price: text("price").notNull().default("0.00"),
   quantity: integer("quantity").notNull().default(0),
   reorderLevel: integer("reorder_level").notNull(),
   description: text("description"),
 });
 
-export const suppliers = pgTable("suppliers", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+export const suppliers = sqliteTable("suppliers", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   name: text("name").notNull(),
   email: text("email"),
   phone: text("phone"),
   address: text("address"),
-  isActive: boolean("is_active").notNull().default(true),
+  isActive: integer("is_active", { mode: 'boolean' }).notNull().default(true),
 });
 
-export const customers = pgTable("customers", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+export const customers = sqliteTable("customers", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   name: text("name").notNull(),
   email: text("email"),
   phone: text("phone"),
   address: text("address"),
 });
 
-export const stockTransactions = pgTable("stock_transactions", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  productId: varchar("product_id").notNull(),
+export const stockTransactions = sqliteTable("stock_transactions", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  productId: text("product_id").notNull(),
   type: text("type").notNull(), // 'in' or 'out'
   reason: text("reason").notNull(), // 'purchase', 'sale', 'return', 'wastage', 'adjustment'
   quantity: integer("quantity").notNull(),
-  unitPrice: decimal("unit_price", { precision: 10, scale: 2 }),
-  totalValue: decimal("total_value", { precision: 10, scale: 2 }),
-  supplierId: varchar("supplier_id"),
-  customerId: varchar("customer_id"),
+  unitPrice: text("unit_price"),
+  totalValue: text("total_value"),
+  supplierId: text("supplier_id"),
+  customerId: text("customer_id"),
   notes: text("notes"),
-  timestamp: timestamp("timestamp").notNull().default(sql`now()`),
+  timestamp: integer("timestamp", { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
 });
 
 // Insert schemas
