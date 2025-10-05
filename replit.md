@@ -2,7 +2,7 @@
 
 ## Overview
 
-StockPro is a comprehensive inventory management system built for small to medium-sized businesses. The application provides real-time inventory tracking, stock transaction management, supplier and customer relationship management, and detailed reporting capabilities. It features a modern React frontend with a clean, intuitive interface and a robust Express.js backend with PostgreSQL database integration.
+StockPro is a comprehensive inventory management system built for small to medium-sized businesses. The application provides real-time inventory tracking, stock transaction management, supplier and customer relationship management, and detailed reporting capabilities. It features a modern React frontend with a clean, intuitive interface and a robust Express.js backend with SQLite database integration.
 
 ## User Preferences
 
@@ -27,7 +27,7 @@ Preferred communication style: Simple, everyday language.
 - **Development**: Hot module replacement and middleware logging
 
 ### Database Schema Design
-The system uses PostgreSQL with four core entities:
+The system uses SQLite with four core entities:
 - **Products**: Central inventory items with SKU, pricing, and stock levels
 - **Suppliers**: Vendor management with contact information and status
 - **Customers**: Customer relationship tracking
@@ -54,8 +54,8 @@ Key architectural decisions:
 ## External Dependencies
 
 ### Core Dependencies
-- **@neondatabase/serverless**: PostgreSQL database connection for Neon cloud hosting
-- **drizzle-orm**: Type-safe ORM with PostgreSQL dialect
+- **better-sqlite3**: Fast SQLite3 database driver for Node.js
+- **drizzle-orm**: Type-safe ORM with SQLite dialect
 - **@tanstack/react-query**: Server state management and caching
 - **react-hook-form**: Form state management with performance optimization
 - **@hookform/resolvers**: Zod integration for form validation
@@ -73,9 +73,11 @@ Key architectural decisions:
 - **esbuild**: Fast JavaScript bundler for production builds
 
 ### Database Integration
-- PostgreSQL as the primary database with Neon cloud hosting
-- Connection pooling and serverless-optimized queries
-- Automatic UUID generation for primary keys
+- SQLite as the primary database stored as `sqlite.db` file
+- File-based database with zero configuration
+- Automatic UUID generation for primary keys using crypto.randomUUID()
 - Built-in timestamp tracking for audit trails
+- Text-based storage for decimal values (prices)
+- Integer mode for booleans and timestamps
 
 The system architecture prioritizes type safety, developer experience, and maintainability while providing a scalable foundation for inventory management operations.
