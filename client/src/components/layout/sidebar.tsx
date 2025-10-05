@@ -75,21 +75,6 @@ export default function Sidebar() {
           })}
         </ul>
       </nav>
-
-      <div className="absolute bottom-6 left-4 right-4">
-        <div className="bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-2xl p-4 border border-purple-200 dark:border-purple-800">
-          <div className="flex items-center gap-2 mb-2">
-            <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-            <h3 className="text-sm font-bold text-purple-900 dark:text-purple-100">Need Help?</h3>
-          </div>
-          <p className="text-xs text-purple-700 dark:text-purple-300 mb-3">
-            Check our documentation for guides and tips
-          </p>
-          <button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white text-xs font-bold py-2 px-4 rounded-lg transition-all duration-300 hover:shadow-lg hover:scale-105">
-            View Docs
-          </button>
-        </div>
-      </div>
     </aside>
   );
 }
